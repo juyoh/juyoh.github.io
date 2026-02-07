@@ -1,5 +1,7 @@
 User-agent: *
 Disallow: /pages/template/
+User-agent: *
+Allow: /sitemap.xml
 User-agent: GPTBot
 Disallow: /
 User-agent: ChatGPT-User
