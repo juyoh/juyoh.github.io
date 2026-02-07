@@ -1,0 +1,202 @@
+body {
+    background-color: rgb(31, 31, 31);
+    color: whitesmoke;
+}
+a {
+  text-decoration: inherit;
+  cursor: pointer;
+  color: aqua;
+}
+#content {
+    margin: 10px;
+}
+.nodrag, .subject_button, .subject_image {
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+#markdown {
+    margin: 1%;
+    border-radius: 10px;
+    border-color: rgb(80, 70, 44);
+    border-style: dashed;
+}
+#error_img {
+    margin: 2%;
+    margin-left: 50%;
+    max-width: 20%;
+    filter: drop-shadow(8px 8px 0px yellow) drop-shadow(12px 12px 1px black);
+}
+#error_text {
+    margin-top: 2%;
+    margin-left: 4%;
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: xx-large;
+}
+.subtitle {
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: oblique;
+    font-size: 300%;
+}
+.title {
+    font-size: 380%;
+    margin-top: 20px;
+}
+.title_text {
+    margin-left: 4%;
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.button {
+    border-radius: 20%;
+    border-color: grey;
+}
+.clickable {
+    cursor: pointer;
+}
+@keyframes bob {
+  from {
+    margin-top: 2%;
+    rotate: 4deg;
+  }
+  to {
+    margin-top: 4%;
+    rotate: -4deg
+  }
+}
+#juyoh_face{
+    margin-top: 2%;
+    margin-left: 2%;
+    width: 240px;
+    display: inline;
+    rotate: 4deg;
+    filter: drop-shadow(8px 8px 0px yellow) drop-shadow(12px 12px 1px black);
+    
+    animation: bob 4s ease-in-out 2s infinite alternate;
+}
+#juyoh_banner {
+    position: sticky;
+    top: 0px;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.781), rgba(0, 0, 0, 0));
+    margin-bottom: 10px;
+}
+#blog_info {
+    margin-left: 1%;
+    font-size: xx-large;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+#blog_created {
+    font-size: large;
+}
+#juyoh_banner_face {
+    margin-top: 1%;
+    margin-left: 1%;
+    width: 60px;
+    display: inline;
+    filter: drop-shadow(2px 2px 0px yellow) drop-shadow(4px 4px 1px black);
+}
+#juyoh_banner_text {
+    color: #f8f8f8;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: larger;
+    display: inline;
+    text-align: center;
+}
+#subjects_container {
+    padding-left: 10px;
+    padding-top: 30px;
+    min-height: 400px;
+}
+.subject_button {
+    max-height: 300px;
+    max-width: 180px;
+    margin-left: 40px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    margin-right: 40px;
+    background-color: orange;
+    filter: saturate(90%)  drop-shadow(8px 8px 0px yellow) drop-shadow(12px 12px 1px black);
+    transition: 0.3s;
+    display: inline-block;
+    cursor: pointer;
+}
+.subject_button:hover {
+    max-height: 320px;
+    max-width: 200px;
+    margin-right: 180px;
+}
+.subject_image {
+   height: 100%;
+   width: 100%;
+   object-fit: contain;
+   filter: saturate(0.9);
+   transition: 0.1s;
+   border-radius: 20px;
+}
+.subject_image:hover {
+   filter: saturate(2);
+}
+
+#scrappy {
+    background-image: url("assets/images/patterns/scrappy.png") ;
+    background-size: 1080px;
+    min-height: 560px;
+    position: relative;
+}
+#scrappy_gradient {
+    min-height: 560px;
+    position: relative;
+}
+
+#caturday_banner {
+    top: 0px;
+    z-index: 10;
+    background-image: linear-gradient(to right, black, rgba(0, 0, 0, 0));
+    padding: 20px;
+    border-radius: 4px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 180%;
+    display: flex;
+}
+#caturday_text {
+    padding-top: 0px; /* Initial style before JS */
+}
+#caturday_gif1, #caturday_gif2, #caturday_gif3 {
+    display: none; /* Initial style before JS */
+    max-width: 200px;
+    padding-left: 20px;
+}
+#content {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+#blog_info {
+    display: block;
+    width: fit-content;
+    padding: 10px;
+    z-index: 9;
+    background-color: rgba(31, 31, 31, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+#top_stuff {
+    top: 0px;
+    position: sticky;
+}
+#latest_post {
+    color: whitesmoke;
+}
+#post_title {
+    font-size:x-large;
+    background-color: black;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 8px;
+}
