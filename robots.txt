@@ -36,3 +36,4 @@ User-agent: Omgili
 Disallow: /
 User-agent: YouBot
 Disallow: /
+Sitemap: https://juyoh.github.io/sitemap.xml
