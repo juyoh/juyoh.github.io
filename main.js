@@ -73,7 +73,6 @@ function clickyButton() {
 			bufferSrc.start(0);
             
         })
-    
     }
 }
 

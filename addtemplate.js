@@ -7,7 +7,7 @@ document.body.innerHTML = `<div id="caturday_banner" class="nodrag">
     <div id="top_stuff">
         <div id="juyoh_banner">
             <div class="clickable nodrag">
-                <a href="../../index.html">
+                <a href="../../">
                     <img id="juyoh_banner_face" src="../../assets/images/icon.png">
                     <div id="juyoh_banner_text">Juyoh's Thingamajicks</div>
                 </a>
