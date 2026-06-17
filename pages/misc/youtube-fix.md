@@ -46,3 +46,9 @@ Here, let's take this URL:<p>
 
 Why two seconds? Why not just one?<p>
 I've found that sometimes a 1 second starting time get ignored by YouTube, so setting it to 2 seconds works more reliably.<p>
+
+You can also try setting this to something like &t=4000s, if that doesn't work.<p>
+I've found that this only works for longer videos however.<p>
+If this still doesn't work, try clearing your browser data for YouTube.<p>
+You can also try watching in a normal window if you're in incognito / private mode,<p>
+and vice versa. Hope this helped! :D<p>
