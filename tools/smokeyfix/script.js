@@ -274,8 +274,13 @@ function downloadLog(url) {
             processLog(rawLog);
         })
         .catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-            document.getElementById('output').innerText = "Failed to download log. Please check the URL.";
+            if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                console.error('There has been a problem with your fetch operation:', error);
+                document.getElementById('output').innerText = "Failed to download log. Please check the URL.";
+            } else {
+                document.getElementById('output').innerText = "An error occurred: " + error.message;
+            }
+            
         });
 }
 function begin() {
@@ -285,7 +290,7 @@ function begin() {
         return;
     }
     if (!urlInput.startsWith("https://paste.shockbyte.com/")) {
-        document.getElementById('output').innerText = "Invalid URL. Please enter a valid Shockbyte paste URL.";
+        document.getElementById('output').innerText = "Invalid URL. Please enter a valid Shockbyte paste URL, eg. https://paste.shockbyte.com/something";
         return;
     }
     downloadLog(getRawURL(urlInput));
