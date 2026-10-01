@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="styles.css" rel="stylesheet"></link>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title>SmokeyFix</title>
+</head>
+<body>
+    <div id="content">
+        <h1>SmokeyFix</h1>
+        <div id="input-url">
+            <input type="text" id="url-input" placeholder="https://paste.shockbyte.com/..." maxlength="48">
+        </div>
+        <div id="output">
+            Paste a URL, then press enter!
+        </div>
+        <div id="fixes"></div>
+        <div id="logHider" style="display: none;">Click to show errors +</div>
+        <div id="shown-lines" style="display: none;"></div>
+
+        </div>
+    </div>
+    <div id="explanation">
+        <h2>What is this?</h2>
+        <p>SmokeyFix diagnoses simple issues with Shockbyte Minecraft servers.</p>
+        <p>Paste in a URL to your latest log, which can be accessed from your control panel.</p>
+        <p>It is mainly aimed at my friends, but feel free to use it if you have stumbled upon it!</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
