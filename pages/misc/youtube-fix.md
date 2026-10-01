@@ -52,3 +52,7 @@ I've found that this only works for longer videos however.<p>
 If this still doesn't work, try clearing your browser data for YouTube.<p>
 You can also try watching in a normal window if you're in incognito / private mode,<p>
 and vice versa. Hope this helped! :D<p>
+
+## Final edit<p>
+After doing some research, I found this is a bug relating to ad blockers.<p>
+A few months later, I updated uBlock on a whim, I am no longer getting this error.
