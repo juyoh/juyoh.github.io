@@ -146,7 +146,7 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[2].includes("WARN")) {
+        else if (line.split(' ')[2].includes("WARN") && !line.includes("Error loading class: ")) {
             allLogLines.push(new LogLine(LineType.WARNING, line));
             if (wasError) {
                 groupedErrors.push(currentErrorGroup);
@@ -154,7 +154,7 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[2].includes("ERROR") || line.split(' ')[2].includes("FATAL")) {
+        else if (line.split(' ')[2].includes("ERROR") || line.split(' ')[2].includes("FATAL") || line.includes("Error loading class: ")) {
             logLine = new LogLine(LineType.ERROR, line.split(' ').slice(4).join(' '));
             allLogLines.push(logLine);
             currentErrorGroup.push(logLine);
@@ -171,7 +171,7 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[1].includes("WARN")) {
+        else if (line.split(' ')[1].includes("WARN") && !line.includes("Error loading class: ")) {
             allLogLines.push(new LogLine(LineType.WARNING, line));
             if (wasError) {
                 groupedErrors.push(currentErrorGroup);
@@ -179,7 +179,7 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[1].includes("ERROR") || line.split(' ')[1].includes("FATAL")) {
+        else if (line.split(' ')[1].includes("ERROR") || line.split(' ')[1].includes("FATAL") || line.includes("Error loading class: ")) {
             logLine = new LogLine(LineType.ERROR, line.split(' ').slice(2).join(' '));
             allLogLines.push(logLine);
             currentErrorGroup.push(logLine);
@@ -196,7 +196,7 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[3].includes("WARN")) {
+        else if (line.split(' ')[3].includes("WARN") && !line.includes("Error loading class: ")) {
             allLogLines.push(new LogLine(LineType.WARNING, line));
             if (wasError) {
                 groupedErrors.push(currentErrorGroup);
@@ -204,7 +204,7 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[3].includes("ERROR") || line.split(' ')[3].includes("FATAL")) {
+        else if (line.split(' ')[3].includes("ERROR") || line.split(' ')[3].includes("FATAL") || line.includes("Error loading class: ")) {
             logLine = new LogLine(LineType.ERROR, line.split(' ').slice(4).join(' '));
             allLogLines.push(logLine);
             currentErrorGroup.push(logLine);
@@ -271,6 +271,13 @@ function errorLineToFixHtml(line, nextLine, nextNextLine) {
             addFix("A mod is missing a dependency. Download modid: <b>" + minecraftToHtml(requiredMod) + "</b> (wanted by <b>" + minecraftToHtml(modName) + "</b>)");
         }
     }
+    if (line.includes("Error loading class: ")) {
+        const fixesContainer = document.getElementById('fixes');
+        if (!fixesContainer.innerHTML.includes("This often happens when client mods are on the server, or a mod is missing a dependency")) {
+            const missingClass = line.split("Error loading class: ")[1];
+            addFix("Error loading class: <b>" + missingClass + "</b>.<p></p><b>This often happens when client mods are on the server, or a mod is missing a dependency</b>");
+        }
+    }
 
 }
 function parseErrorGroup(errorGroup) {
@@ -325,14 +332,17 @@ function parseErrorGroup(errorGroup) {
     shownErrorLines = [];
 }
 function getRawURL(url) {
-    const urlObj = new URL(url);
-    const pathSegments = urlObj.pathname.split('/');
-    const lastSegment = pathSegments[pathSegments.length - 1];
-    return `https://paste.shockbyte.com/raw/${lastSegment}`;
+    if (url.startsWith("https://paste.shockbyte.com")) {
+        return url.replace("https://paste.shockbyte.com", "https://paste.shockbyte.com/raw");
+    }
+    if (url.startsWith("https://mclo.gs/")) {
+        return url.replace("https://mclo.gs/", "https://api.mclo.gs/1/raw/");
+    }
+
+    return ""
 }
 function downloadLog(url) {
-    const rawURL = getRawURL(url);
-    fetch(rawURL)
+    fetch(url)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -360,8 +370,8 @@ function begin() {
         document.getElementById('output').innerText = "Please enter a URL.";
         return;
     }
-    if (!urlInput.startsWith("https://paste.shockbyte.com/")) {
-        document.getElementById('output').innerText = "Invalid URL. Please enter a valid Shockbyte paste URL, eg. https://paste.shockbyte.com/something";
+    if (getRawURL(urlInput) === "") {
+        document.getElementById('output').innerText = "Invalid URL. Please enter a valid paste.shockbyte.com or mclo.gs URL.";
         return;
     }
     downloadLog(getRawURL(urlInput));
@@ -372,7 +382,7 @@ function dropHandler(ev) {
     .map((item) => item.getAsFile())
     .filter((file) => file);
   var file = files[0];
-  if (file.type.startsWith("text/")) {
+  if (file.type.startsWith("text/") || file.type == "") {
       const reader = new FileReader();
       reader.onload = function (e) {
           rawLog = e.target.result;
@@ -409,22 +419,13 @@ dropZone.addEventListener("dragover", (e) => {
   );
   if (fileItems.length > 0) {
     e.preventDefault();
-    if (fileItems.some((item) => item.type.startsWith("text/"))) {
-      e.dataTransfer.dropEffect = "copy";
-    } else {
-      e.dataTransfer.dropEffect = "none";
-    }
-  }
-});
-
-window.addEventListener("dragover", (e) => {
-  const fileItems = [...e.dataTransfer.items].filter(
-    (item) => item.kind === "file",
-  );
-  if (fileItems.length > 0) {
-    e.preventDefault();
-    if (!dropZone.contains(e.target)) {
-      e.dataTransfer.dropEffect = "none";
+    e.dataTransfer.effectAllowed = "copy";
+    e.dataTransfer.dropEffect = "none";
+    for (const item of fileItems) {
+        //also allow .log files and files with no type (eg .txt files) to be dropped
+        if (item.type.startsWith("text/") || item.type == "") {
+            e.dataTransfer.dropEffect = "copy";
+        }
     }
   }
 });
