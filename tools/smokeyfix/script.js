@@ -134,8 +134,11 @@ function processLog(log) {
     shownErrorLines = [];
     document.getElementById("shown-lines").innerHTML = ""
     document.getElementById("fixes").innerHTML = ""
-    for (const line of log.split('\n')) {
-        if (line.split(' ')[3] === "[INFO]") {
+    for (const line of log.split('\n')) { 
+        if (line.split(' ').length < 3) {
+            continue;
+        }
+        if (line.split(' ')[2].includes("INFO")) {
             allLogLines.push(new LogLine(LineType.INFO, line));
             if (wasError) {
                 groupedErrors.push(currentErrorGroup);
@@ -143,7 +146,7 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[3] === "[WARNING]") {
+        else if (line.split(' ')[2].includes("WARN")) {
             allLogLines.push(new LogLine(LineType.WARNING, line));
             if (wasError) {
                 groupedErrors.push(currentErrorGroup);
@@ -151,11 +154,64 @@ function processLog(log) {
             }
             wasError = false;
         }
-        else if (line.split(' ')[3] === "[ERROR]") {
+        else if (line.split(' ')[2].includes("ERROR") || line.split(' ')[2].includes("FATAL")) {
             logLine = new LogLine(LineType.ERROR, line.split(' ').slice(4).join(' '));
             allLogLines.push(logLine);
             currentErrorGroup.push(logLine);
             wasError = true;
+        }
+        if (line.split(' ').length < 2) {
+            continue;
+        }
+        if (line.split(' ')[1].includes("INFO")) {
+            allLogLines.push(new LogLine(LineType.INFO, line));
+            if (wasError) {
+                groupedErrors.push(currentErrorGroup);
+                currentErrorGroup = [];
+            }
+            wasError = false;
+        }
+        else if (line.split(' ')[1].includes("WARN")) {
+            allLogLines.push(new LogLine(LineType.WARNING, line));
+            if (wasError) {
+                groupedErrors.push(currentErrorGroup);
+                currentErrorGroup = [];
+            }
+            wasError = false;
+        }
+        else if (line.split(' ')[1].includes("ERROR") || line.split(' ')[1].includes("FATAL")) {
+            logLine = new LogLine(LineType.ERROR, line.split(' ').slice(2).join(' '));
+            allLogLines.push(logLine);
+            currentErrorGroup.push(logLine);
+            wasError = true;
+        }
+        if (line.split(' ').length < 4) {
+            continue;
+        }
+         if (line.split(' ')[3].includes("INFO")) {
+            allLogLines.push(new LogLine(LineType.INFO, line));
+            if (wasError) {
+                groupedErrors.push(currentErrorGroup);
+                currentErrorGroup = [];
+            }
+            wasError = false;
+        }
+        else if (line.split(' ')[3].includes("WARN")) {
+            allLogLines.push(new LogLine(LineType.WARNING, line));
+            if (wasError) {
+                groupedErrors.push(currentErrorGroup);
+                currentErrorGroup = [];
+            }
+            wasError = false;
+        }
+        else if (line.split(' ')[3].includes("ERROR") || line.split(' ')[3].includes("FATAL")) {
+            logLine = new LogLine(LineType.ERROR, line.split(' ').slice(4).join(' '));
+            allLogLines.push(logLine);
+            currentErrorGroup.push(logLine);
+            wasError = true;
+        }
+        if (currentErrorGroup.length > 0) {
+            currentErrorGroup.push(new LogLine(LineType.ERROR, line));
         }
     }
     if (wasError) {
@@ -167,6 +223,11 @@ function processLog(log) {
     }
       if (document.getElementById('shown-lines').innerHTML === "") {
         document.getElementById('fixes').innerHTML = "<b>No errors found! :3</b>";
+        document.getElementById('logHider').style.display = "none";
+    }
+    const fixContainer = document.getElementById('fixes');
+    if (fixContainer.innerHTML === "") {
+        fixContainer.innerHTML = "<b>Couldn't find any fixes! Click below to show the errors:</b>";
     }
     document.getElementById('output').innerText = "Finished processing, found " + groupedErrors.length + (groupedErrors.length === 1 ? " error group." : " error groups.");
 }
@@ -177,7 +238,7 @@ function addFix(fixHtml){
     fixElement.innerHTML = fixHtml;
     fixesContainer.appendChild(fixElement);
 }
-function errorLineToFixHtml(line) {
+function errorLineToFixHtml(line, nextLine, nextNextLine) {
     if (line.includes("java.lang.OutOfMemoryError")) {
         addFix("Your server <b> ran out of memory</b>. Remove some mods!");
     }
@@ -200,6 +261,17 @@ function errorLineToFixHtml(line) {
         const requiredMod = line.split(" requires ")[1];
         addFix("A mod is missing a dependency. Download modid: <b>" + minecraftToHtml(requiredMod) + "</b> (wanted by <b>" + minecraftToHtml(modName) + "</b>)");
     }
+    if (line.includes("A potential solution has been determined, this may resolve your problem:")) {
+        addFix("Fabric has guessed a solution: <b>" + minecraftToHtml(nextLine) + "</b>");
+    }
+    if (line.includes("[net.minecraftforge.fml.ModLoader/CORE]: Error during pre-loading phase")) {
+        if (nextNextLine.includes("Mod ")) {
+            const modName = nextNextLine.split("Mod ")[1].split(" requires ")[0];
+            const requiredMod = nextNextLine.split(" requires ")[1];
+            addFix("A mod is missing a dependency. Download modid: <b>" + minecraftToHtml(requiredMod) + "</b> (wanted by <b>" + minecraftToHtml(modName) + "</b>)");
+        }
+    }
+
 }
 function parseErrorGroup(errorGroup) {
     parsingFMLLoadFailure = false;
@@ -237,21 +309,20 @@ function parseErrorGroup(errorGroup) {
     const shownLinesContainer = document.getElementById('shown-lines');
     document.getElementById("logHider").style.display = "block";
     document.getElementById("explanation").style.display = "none";
-    const fixContainer = document.getElementById('fixes');
     const errorGroupContainer = document.createElement('div');
     errorGroupContainer.classList.add('error-group');
-    for (const line of shownErrorLines) {
+    for (let i = 0; i < shownErrorLines.length; i++) {
+        const line = shownErrorLines[i];
+        const nextLine = shownErrorLines[i + 1];
+        const nextNextLine = shownErrorLines[i + 2];
         const lineElement = document.createElement('div');
         lineElement.classList.add('error-line');
         lineElement.innerHTML = minecraftToHtml(line);
         errorGroupContainer.appendChild(lineElement);
-        errorLineToFixHtml(line);
+        errorLineToFixHtml(line, nextLine, nextNextLine);
     }
     shownLinesContainer.appendChild(errorGroupContainer);
     shownErrorLines = [];
-    if (fixContainer.innerHTML === "") {
-        fixContainer.innerHTML = "<b>Couldn't find any fixes! Click below to show the errors:</b>";
-    }
 }
 function getRawURL(url) {
     const urlObj = new URL(url);
@@ -295,6 +366,24 @@ function begin() {
     }
     downloadLog(getRawURL(urlInput));
 }
+function dropHandler(ev) {
+  ev.preventDefault();
+  const files = [...ev.dataTransfer.items]
+    .map((item) => item.getAsFile())
+    .filter((file) => file);
+  var file = files[0];
+  if (file.type.startsWith("text/")) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+          rawLog = e.target.result;
+          document.getElementById('output').innerText = "Log uploaded successfully. Processing...";
+          processLog(rawLog);
+      }
+      reader.readAsText(file);
+  } else {
+        document.getElementById('output').innerText = "Invalid file type. Please upload a Minecraft .log file.";
+  }
+}
 document.getElementById('url-input').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         begin();
@@ -310,4 +399,32 @@ document.getElementById('logHider').addEventListener('click', function () {
         shownLinesContainer.style.display = 'none';
         logHider.innerText = 'Click to show errors +';
     }
+});
+const dropZone = document.getElementById("upload");
+dropZone.addEventListener("drop", dropHandler);
+
+dropZone.addEventListener("dragover", (e) => {
+  const fileItems = [...e.dataTransfer.items].filter(
+    (item) => item.kind === "file",
+  );
+  if (fileItems.length > 0) {
+    e.preventDefault();
+    if (fileItems.some((item) => item.type.startsWith("text/"))) {
+      e.dataTransfer.dropEffect = "copy";
+    } else {
+      e.dataTransfer.dropEffect = "none";
+    }
+  }
+});
+
+window.addEventListener("dragover", (e) => {
+  const fileItems = [...e.dataTransfer.items].filter(
+    (item) => item.kind === "file",
+  );
+  if (fileItems.length > 0) {
+    e.preventDefault();
+    if (!dropZone.contains(e.target)) {
+      e.dataTransfer.dropEffect = "none";
+    }
+  }
 });

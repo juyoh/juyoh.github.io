@@ -33,7 +33,7 @@ Go to your browser's URL bar, and add to the end:<p>
 And that's it! Press enter, the page will reload, and you can finally watch your video.<p>
 
 ## Explanation<p>
-Whilst I am not entirely sure what causing this, I can make a pretty good guess.<p>
+Whilst I am not entirely sure what is causing this, I can make a pretty good guess.<p>
 
 YouTube web has a feature where you can share videos at a certain time, just by sending a link.<p>
 Here, let's take this URL:<p>
